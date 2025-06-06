@@ -88,20 +88,39 @@
 </head>
 <body>
 
-    <div class="game-info">
-        <span>Pontos: <span id="score">0</span></span>
-        <span>Combustível: <span id="fuel">100</span></span>
-        <span>Vidas: <span id="lives">3</span></span>
+    <div id="mainMenu" class="flex flex-col items-center justify-center min-h-screen">
+        <h1 class="text-4xl mb-4">Menu</h1>
+        <a href="#" id="startLink" class="text-2xl text-blue-400 underline">riverraidweb</a>
     </div>
 
-    <div class="controls-info">
-        Use as setas (← → ↑ ↓) para mover e Espaço para atirar.
+    <div id="gameContainer" style="display:none; width: 100%; height: 100%;">
+        <div class="game-info">
+            <span>Pontos: <span id="score">0</span></span>
+            <span>Combustível: <span id="fuel">100</span></span>
+            <span>Vidas: <span id="lives">3</span></span>
+        </div>
+
+        <div class="controls-info">
+            Use as setas (← → ↑ ↓) para mover e Espaço para atirar.
+        </div>
+
+        <div id="messageOverlay" style="display: none;">
+            <p id="messageText"></p>
+            <button id="restartButton" style="display: none;">Reiniciar Jogo</button>
+        </div>
     </div>
 
-    <div id="messageOverlay" style="display: none;">
-        <p id="messageText"></p>
-        <button id="restartButton" style="display: none;">Reiniciar Jogo</button>
-    </div>
+    <script>
+        const startLink = document.getElementById('startLink');
+        const menu = document.getElementById('mainMenu');
+        const gameContainer = document.getElementById('gameContainer');
+
+        startLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            menu.style.display = 'none';
+            gameContainer.style.display = 'block';
+        });
+    </script>
 
     <script src="game.js"></script>
 </body>
