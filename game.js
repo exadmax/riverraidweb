@@ -1,6 +1,6 @@
 // --- Configurações Iniciais ---
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+let canvas;
+let ctx;
 
 // Ajustar tamanho do canvas dinamicamente
 function resizeCanvas() {
@@ -21,10 +21,8 @@ function resizeCanvas() {
     canvas.width = Math.floor(newWidth); // Usar Math.floor para evitar subpixels
     canvas.height = Math.floor(newHeight);
 
-    // Redesenhar elementos se o jogo estiver rodando e o estado for 'playing'
-    // Esta parte pode precisar de mais lógica se as posições dos elementos dependerem do tamanho do canvas
-    // e precisarem ser recalculadas dinamicamente durante o jogo.
-    if (typeof gameLoop === 'function' && gameState === 'playing') {
+    // Redesenhar elementos se o jogo estiver rodando
+    if (gameState === 'playing') {
          // Exemplo: player.x = canvas.width / 2 - player.width / 2; (se precisar recentralizar)
     }
 }
@@ -48,8 +46,8 @@ let gameTime = 0; // Contador de tempo para eventos
 
 // --- Jogador ---
 const player = {
-    x: canvas.width / 2 - 15, // Será atualizado em resetGame
-    y: canvas.height - 70, // Será atualizado em resetGame
+    x: 0, // Definido em resetGame após criação do canvas
+    y: 0, // Definido em resetGame após criação do canvas
     width: 30,
     height: 30,
     color: '#00ff00', // Verde para o avião
@@ -65,7 +63,7 @@ const player = {
 const riverBanks = [];
 const bankWidth = 50; // Largura visual das margens (usada para cálculos de spawn)
 const riverPathVariation = 10; // Quão sinuoso o rio pode ser
-let currentRiverCenter = canvas.width / 2; // Será atualizado em resetGame
+let currentRiverCenter = 0; // Definido em resetGame após criação do canvas
 
 // --- Inimigos, Combustível, Pontes ---
 const enemies = [];
@@ -414,22 +412,7 @@ function drawGame() {
     fuelStations.forEach(drawFuelStation);
 }
 
-let animationFrameId;
-
-function gameLoop() {
-    if (gameState === 'paused') {
-        animationFrameId = requestAnimationFrame(gameLoop);
-        return;
-    }
-
-    if (gameState !== 'playing') {
-        return; // Evita múltiplos loops quando o jogo não está ativo
-    }
-
-    updateGame();
-    drawGame();
-    animationFrameId = requestAnimationFrame(gameLoop);
-}
+// Loop principal será controlado pelo p5.js
 
 // --- UI e Controle de Estado ---
 function updateScore() {
@@ -455,18 +438,9 @@ function hideMessage() {
        function startGame() {
    // A inicialização do Tone.js é feita no manipulador de eventos de tecla/botão
    if (gameState === 'gameOver' || gameState === 'start') {
-        if (animationFrameId) {
-            cancelAnimationFrame(animationFrameId);
-        }
         resetGame();
         gameState = 'playing';
         hideMessage();
-        if (typeof requestAnimationFrame === 'function') { // Garante que o gameLoop só comece se RAF estiver disponível
-            animationFrameId = requestAnimationFrame(gameLoop);
-        } else {
-            console.error("requestAnimationFrame não é suportado.");
-            showMessage("Erro: seu navegador não suporta animações essenciais.", false);
-        }
     }
 }
 
@@ -514,9 +488,7 @@ function resetGame() {
        function gameOver(reason = "Fim de Jogo!") {
     if (gameState === 'gameOver') return;
     gameState = 'gameOver';
-    if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-    }
+    // Loop será reiniciado automaticamente pelo p5.js
     playSound('gameOver');
     showMessage(`${reason}\nPontuação Final: ${score}`, true);
 }
@@ -622,10 +594,29 @@ function playSound(type) {
 }
 
 // --- Inicialização ---
-window.addEventListener('load', () => {
-    resizeCanvas(); 
-    showMessage("Pressione ESPAÇO ou ENTER para Iniciar", false);
-    // O gameLoop só começa quando o jogador inicia o jogo.
-    // Tone.start() será chamado no primeiro keydown ou clique no botão de reiniciar.
-});
-window.addEventListener('resize', resizeCanvas); 
+// Inicialização controlada pelo sketch do p5.js
+
+const sketch = (p) => {
+    p.setup = () => {
+        const p5Canvas = p.createCanvas(600, 800);
+        p5Canvas.id('gameCanvas');
+        canvas = p5Canvas.elt;
+        ctx = canvas.getContext('2d');
+        resizeCanvas();
+        showMessage("Pressione ESPAÇO ou ENTER para Iniciar", false);
+    };
+
+    p.draw = () => {
+        if (gameState === 'paused') return;
+        if (gameState === 'playing') {
+            updateGame();
+            drawGame();
+        }
+    };
+
+    p.windowResized = () => {
+        resizeCanvas();
+    };
+};
+
+new p5(sketch);

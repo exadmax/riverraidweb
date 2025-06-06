@@ -38,7 +38,8 @@ O objetivo do jogo é voar o mais longe possível ao longo do rio, destruindo in
 
 * **HTML5:** Estrutura do jogo (arquivo principal: `index.html`).
 * **CSS3:** Estilização da página e elementos do jogo (com Tailwind CSS para utilitários básicos de layout da página, embutido no `index.html`).
-* **JavaScript (ES6+):** Lógica principal do jogo, manipulação do DOM e renderização no Canvas (embutido no `index.html`).
+* **JavaScript (ES6+):** Lógica principal do jogo, manipulação do DOM e renderização no Canvas.
+* **p5.js:** Biblioteca utilizada para gerenciamento do canvas e loop do jogo.
 * **HTML5 Canvas API:** Para desenhar e animar os elementos do jogo.
 * **Tone.js:** Para a geração de efeitos sonoros.
 
