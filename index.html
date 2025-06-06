@@ -522,14 +522,18 @@
         }
 
         let animationFrameId;
+        let gameLoopRunning = false;
 
         function gameLoop() {
+            if (!gameLoopRunning) return;
+
             if (gameState === 'paused') {
                 animationFrameId = requestAnimationFrame(gameLoop);
                 return;
             }
 
             if (gameState !== 'playing') {
+                gameLoopRunning = false;
                 return; // Evita múltiplos loops quando o jogo não está ativo
             }
 
@@ -564,11 +568,15 @@
            if (gameState === 'gameOver' || gameState === 'start') {
                 if (animationFrameId) {
                     cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
                 }
+                gameLoopRunning = false;
+
                 resetGame();
                 gameState = 'playing';
                 hideMessage();
                 if (typeof requestAnimationFrame === 'function') { // Garante que o gameLoop só comece se RAF estiver disponível
+                    gameLoopRunning = true;
                     animationFrameId = requestAnimationFrame(gameLoop);
                 } else {
                     console.error("requestAnimationFrame não é suportado.");
@@ -623,7 +631,9 @@
             gameState = 'gameOver';
             if (animationFrameId) {
                 cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
             }
+            gameLoopRunning = false;
             playSound('gameOver');
             showMessage(`${reason}\nPontuação Final: ${score}`, true);
         }
