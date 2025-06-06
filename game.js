@@ -627,6 +627,7 @@ function playSound(type) {
 const sketch = (p) => {
     p.setup = () => {
         const p5Canvas = p.createCanvas(600, 800);
+        p5Canvas.parent('gameContainer');
         p5Canvas.id('gameCanvas');
         canvas = p5Canvas.elt;
         ctx = canvas.getContext('2d');
