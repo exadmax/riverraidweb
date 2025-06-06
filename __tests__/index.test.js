@@ -14,10 +14,12 @@ describe('index.html estrutura basica', () => {
     expect(document.getElementById('messageOverlay')).not.toBeNull();
   });
 
-  test('inclui script game.js', () => {
+  test('inclui scripts principais', () => {
     const scripts = Array.from(document.querySelectorAll('script'))
       .map(s => s.getAttribute('src'))
       .filter(Boolean);
-    expect(scripts).toContain('game.js');
+    expect(scripts).toContain('core.js');
+    expect(scripts).toContain('riverraid.js');
+    expect(scripts).toContain('grandprix.js');
   });
 });
