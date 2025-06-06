@@ -1,4 +1,6 @@
 // --- Configurações Iniciais ---
+if (!window.gameCore) window.gameCore = {};
+window.gameCore.currentGame = 'riverraid';
 let canvas;
 let ctx;
 
@@ -648,4 +650,6 @@ const sketch = (p) => {
     };
 };
 
-new p5(sketch);
+window.initRiverRaid = function() {
+    new p5(sketch);
+};
