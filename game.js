@@ -93,17 +93,26 @@ let audioContextStarted = false; // Flag para controlar o início do Tone.js
 // --- Funções de Desenho ---
 function drawPlayer() {
     ctx.fillStyle = player.color;
-    // Corpo principal do avião (retângulo)
-    ctx.fillRect(player.x, player.y, player.width, player.height);
-    // "Cockpit" (pequeno quadrado na frente)
-    ctx.fillStyle = '#ffffff'; // Branco para o cockpit
-    ctx.fillRect(player.x + player.width / 2 - 3, player.y - 5, 6, 5);
-    // Asas (retângulos laterais)
+
+    // Fuselagem em formato de triângulo
+    ctx.beginPath();
+    ctx.moveTo(player.x + player.width / 2, player.y - 6); // ponta do nariz
+    ctx.lineTo(player.x + player.width, player.y + player.height);
+    ctx.lineTo(player.x, player.y + player.height);
+    ctx.closePath();
+    ctx.fill();
+
+    // Cabine
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(player.x + player.width / 2 - 3, player.y + player.height * 0.2, 6, 4);
+
     ctx.fillStyle = player.color;
-    ctx.fillRect(player.x - 10, player.y + 10, 10, 10); // Asa esquerda
-    ctx.fillRect(player.x + player.width, player.y + 10, 10, 10); // Asa direita
-    // Estabilizador traseiro
-    ctx.fillRect(player.x + player.width / 2 - 3, player.y + player.height, 6, 8);
+    // Asas
+    ctx.fillRect(player.x - player.width * 0.6, player.y + player.height * 0.5, player.width * 0.6, 4);
+    ctx.fillRect(player.x + player.width, player.y + player.height * 0.5, player.width * 0.6, 4);
+
+    // Cauda
+    ctx.fillRect(player.x + player.width / 2 - 2, player.y + player.height - 1, 4, 8);
 }
 
 function drawBullet(bullet) {
@@ -124,16 +133,35 @@ function drawRiverBanks() {
 function drawEnemy(enemy) {
     ctx.fillStyle = enemy.color;
     if (enemy.type === 'ship') {
-        ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height); // Corpo
-        ctx.fillRect(enemy.x + enemy.width / 2 - 3, enemy.y - 5, 6, 5); // "Torre"
+        // casco
+        ctx.beginPath();
+        ctx.moveTo(enemy.x, enemy.y + enemy.height);
+        ctx.lineTo(enemy.x + enemy.width / 2, enemy.y);
+        ctx.lineTo(enemy.x + enemy.width, enemy.y + enemy.height);
+        ctx.closePath();
+        ctx.fill();
+
+        // torre
+        ctx.fillRect(enemy.x + enemy.width / 2 - 3, enemy.y - 6, 6, 6);
     } else if (enemy.type === 'helicopter') {
-        ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height); // Corpo
-        ctx.fillRect(enemy.x + enemy.width / 2 - 10, enemy.y - 3, 20, 3); // Hélice superior
-        ctx.fillRect(enemy.x - 5, enemy.y + enemy.height / 2 - 1, 5, 2); // Hélice traseira
+        ctx.beginPath();
+        ctx.ellipse(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, enemy.width / 2, enemy.height / 2, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // hélices
+        ctx.fillRect(enemy.x + enemy.width / 2 - 12, enemy.y - 4, 24, 3);
+        ctx.fillRect(enemy.x - 4, enemy.y + enemy.height / 2 - 1, 8, 2);
     } else if (enemy.type === 'jet') {
-        ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height); // Corpo
-        ctx.fillRect(enemy.x - 5, enemy.y + 5, 5, enemy.height - 10); // Asa esquerda
-        ctx.fillRect(enemy.x + enemy.width, enemy.y + 5, 5, enemy.height - 10); // Asa direita
+        ctx.beginPath();
+        ctx.moveTo(enemy.x + enemy.width / 2, enemy.y);
+        ctx.lineTo(enemy.x + enemy.width, enemy.y + enemy.height);
+        ctx.lineTo(enemy.x, enemy.y + enemy.height);
+        ctx.closePath();
+        ctx.fill();
+
+        // asas
+        ctx.fillRect(enemy.x - 6, enemy.y + enemy.height * 0.5, 6, 3);
+        ctx.fillRect(enemy.x + enemy.width, enemy.y + enemy.height * 0.5, 6, 3);
     }
 }
 
