@@ -574,6 +574,13 @@
             gameSpeed = 2;
             gameTime = 0;
 
+            // Zerar velocidades e estados das teclas para evitar aceleração inesperada
+            player.dx = 0;
+            player.dy = 0;
+            for (const key in keys) {
+                keys[key] = false;
+            }
+
             player.x = canvas.width / 2 - player.width / 2;
             player.y = canvas.height - 70;
             player.bullets = [];
