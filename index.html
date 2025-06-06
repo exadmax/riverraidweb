@@ -521,14 +521,21 @@
             fuelStations.forEach(drawFuelStation);
         }
 
+        let animationFrameId;
+
         function gameLoop() {
             if (gameState === 'paused') {
-                requestAnimationFrame(gameLoop);
+                animationFrameId = requestAnimationFrame(gameLoop);
                 return;
             }
+
+            if (gameState !== 'playing') {
+                return; // Evita múltiplos loops quando o jogo não está ativo
+            }
+
             updateGame();
             drawGame();
-            requestAnimationFrame(gameLoop);
+            animationFrameId = requestAnimationFrame(gameLoop);
         }
 
         // --- UI e Controle de Estado ---
@@ -552,14 +559,17 @@
             messageOverlay.style.display = 'none';
         }
 
-        function startGame() {
-            // A inicialização do Tone.js é feita no manipulador de eventos de tecla/botão
-            if (gameState === 'gameOver' || gameState === 'start') {
+       function startGame() {
+           // A inicialização do Tone.js é feita no manipulador de eventos de tecla/botão
+           if (gameState === 'gameOver' || gameState === 'start') {
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                }
                 resetGame();
                 gameState = 'playing';
                 hideMessage();
                 if (typeof requestAnimationFrame === 'function') { // Garante que o gameLoop só comece se RAF estiver disponível
-                    gameLoop(); 
+                    animationFrameId = requestAnimationFrame(gameLoop);
                 } else {
                     console.error("requestAnimationFrame não é suportado.");
                     showMessage("Erro: seu navegador não suporta animações essenciais.", false);
@@ -608,9 +618,12 @@
             updateLives();
         }
 
-        function gameOver(reason = "Fim de Jogo!") {
-            if (gameState === 'gameOver') return; 
+       function gameOver(reason = "Fim de Jogo!") {
+            if (gameState === 'gameOver') return;
             gameState = 'gameOver';
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
             playSound('gameOver');
             showMessage(`${reason}\nPontuação Final: ${score}`, true);
         }
