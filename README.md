@@ -47,11 +47,17 @@ O objetivo do jogo é voar o mais longe possível ao longo do rio, destruindo in
 
 1.  **Salve o arquivo:**
     * Certifique-se de que você tem o arquivo `index.html` contendo todo o código do jogo salvo em seu computador.
-2.  **Abra o arquivo no navegador:**
+2.  **Instale as dependências:**
+    * Execute `npm install` para preparar o ambiente de testes.
+3.  **Abra o arquivo no navegador:**
     * Navegue até a pasta onde você salvou o arquivo `index.html`.
     * Abra o arquivo `index.html` diretamente no seu navegador de preferência (Google Chrome, Firefox, Edge, etc.).
 
 O jogo deverá carregar e você poderá começar a jogar!
+
+## 🧪 Testes
+
+Após instalar as dependências, rode `npm test` para executar testes básicos de estrutura.
 
 ## 🔮 Melhorias Futuras (Sugestões)
 
