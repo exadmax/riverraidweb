@@ -50,6 +50,18 @@
             color: #a0a0a0; /* Cinza mais claro */
             text-align: center;
         }
+        .touch-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            max-width: 600px;
+            margin-top: 10px;
+        }
+        .touch-controls button {
+            width: 60px;
+            height: 60px;
+        }
         button {
             background-color: #00ffff;
             color: #1a1a2e;
@@ -103,6 +115,14 @@
 
         <div class="controls-info">
             Use as setas (← → ↑ ↓) para mover e Espaço para atirar.
+        </div>
+
+        <div id="touchControls" class="touch-controls">
+            <button id="btnLeft">◀</button>
+            <button id="btnRight">▶</button>
+            <button id="btnUp">▲</button>
+            <button id="btnDown">▼</button>
+            <button id="btnShoot">Fire</button>
         </div>
 
         <div id="messageOverlay" style="display: none;">
