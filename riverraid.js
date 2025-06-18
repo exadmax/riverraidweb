@@ -37,6 +37,11 @@ const livesDisplay = document.getElementById('lives');
 const messageOverlay = document.getElementById('messageOverlay');
 const messageText = document.getElementById('messageText');
 const restartButton = document.getElementById('restartButton');
+const btnLeft = document.getElementById('btnLeft');
+const btnRight = document.getElementById('btnRight');
+const btnUp = document.getElementById('btnUp');
+const btnDown = document.getElementById('btnDown');
+const btnShoot = document.getElementById('btnShoot');
 
 // --- Estado do Jogo ---
 let score = 0;
@@ -528,6 +533,33 @@ const keys = {
     ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false, Space: false
 };
 
+function updateMovement() {
+    player.dx = 0;
+    player.dy = 0;
+    if (keys.ArrowLeft) player.dx = -player.speed;
+    if (keys.ArrowRight) player.dx = player.speed;
+    if (keys.ArrowUp) player.dy = -player.speed;
+    if (keys.ArrowDown) player.dy = player.speed;
+}
+
+function tryShoot() {
+    if (keys.Space && player.shootCooldown === 0 && player.bullets.length < player.maxBullets) {
+        player.bullets.push({
+            x: player.x + player.width / 2 - 2.5,
+            y: player.y, width: 5, height: 10, speed: 7
+        });
+        player.shootCooldown = 15;
+        playSound('shoot');
+    }
+}
+
+function setKeyState(key, state) {
+    if (!(key in keys)) return;
+    keys[key] = state;
+    updateMovement();
+    if (key === 'Space' && state) tryShoot();
+}
+
 window.addEventListener('keydown', async (e) => { // Tornar async para await Tone.start()
     if (!audioContextStarted) {
         try {
@@ -545,36 +577,14 @@ window.addEventListener('keydown', async (e) => { // Tornar async para await Ton
     }
     if (gameState !== 'playing') return;
 
-    if (e.key in keys) keys[e.key] = true;
-    if (e.code === 'Space') keys.Space = true; // Para garantir que 'Space' (código) também funcione
-
-    player.dx = 0;
-    player.dy = 0;
-    if (keys.ArrowLeft) player.dx = -player.speed;
-    if (keys.ArrowRight) player.dx = player.speed;
-    if (keys.ArrowUp) player.dy = -player.speed;
-    if (keys.ArrowDown) player.dy = player.speed;
-
-    if (keys.Space && player.shootCooldown === 0 && player.bullets.length < player.maxBullets) {
-        player.bullets.push({
-            x: player.x + player.width / 2 - 2.5, 
-            y: player.y, width: 5, height: 10, speed: 7
-        });
-        player.shootCooldown = 15; 
-        playSound('shoot');
-    }
+    if (e.key in keys) setKeyState(e.key, true);
+    if (e.code === 'Space') setKeyState('Space', true); // Para garantir que 'Space' (código) também funcione
 });
 
 window.addEventListener('keyup', (e) => {
     if (gameState !== 'playing') return;
-    if (e.key in keys) keys[e.key] = false;
-    if (e.code === 'Space') keys.Space = false;
-
-
-    if (e.key === 'ArrowLeft' && player.dx < 0) player.dx = 0;
-    if (e.key === 'ArrowRight' && player.dx > 0) player.dx = 0;
-    if (e.key === 'ArrowUp' && player.dy < 0) player.dy = 0;
-    if (e.key === 'ArrowDown' && player.dy > 0) player.dy = 0;
+    if (e.key in keys) setKeyState(e.key, false);
+    if (e.code === 'Space') setKeyState('Space', false);
 });
 
 restartButton.addEventListener('click', async () => { // Tornar async para await Tone.start()
@@ -589,6 +599,20 @@ restartButton.addEventListener('click', async () => { // Tornar async para await
     }
     startGame();
 });
+
+// Controles de toque
+
+function bindButton(button, key) {
+    if (!button) return;
+    ['mousedown','touchstart'].forEach(evt => button.addEventListener(evt, () => setKeyState(key, true)));
+    ['mouseup','touchend','mouseleave','touchcancel'].forEach(evt => button.addEventListener(evt, () => setKeyState(key, false)));
+}
+
+bindButton(btnLeft, 'ArrowLeft');
+bindButton(btnRight, 'ArrowRight');
+bindButton(btnUp, 'ArrowUp');
+bindButton(btnDown, 'ArrowDown');
+bindButton(btnShoot, 'Space');
 
 
 // --- Funções de Som ---

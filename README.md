@@ -7,8 +7,8 @@ Um jogo de arcade estilo River Raid desenvolvido em HTML, CSS e JavaScript puro,
 O objetivo do jogo é voar o mais longe possível ao longo do rio, destruindo inimigos e postos de combustível para reabastecer, enquanto desvia das margens do rio.
 
 ### Controles:
-* **Setas Direcionais (← → ↑ ↓):** Mover a nave.
-* **Barra de Espaço:** Atirar.
+* **Setas Direcionais (← → ↑ ↓) ou botões de toque:** Mover a nave.
+* **Barra de Espaço ou botão "Fire":** Atirar.
 * **Enter / Espaço (na tela inicial):** Iniciar o jogo.
 
 ### Elementos do Jogo:
@@ -68,7 +68,6 @@ Após instalar as dependências, rode `npm test` para executar testes básicos d
 * Aumento progressivo da dificuldade com níveis ou fases.
 * Música de fundo e efeitos sonoros mais elaborados.
 * Tabela de recordes (High Scores) usando LocalStorage.
-* Suporte a controles mobile (touch).
 
 ---
 
