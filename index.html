@@ -100,13 +100,8 @@
 </head>
 <body>
 
-    <div id="mainMenu" class="flex flex-col items-center justify-center min-h-screen">
-        <h1 class="text-4xl mb-4">Menu</h1>
-        <a href="#" id="riverRaidLink" class="text-2xl text-blue-400 underline mb-2">River Raid</a>
-        <a href="#" id="grandPrixLink" class="text-2xl text-blue-400 underline">Grand Prix</a>
-    </div>
-
-    <div id="gameContainer" style="display:none; width: 100%; height: 100%;">
+    
+    <div id="gameContainer" style="width: 100%; height: 100%;">
         <div class="game-info">
             <span>Pontos: <span id="score">0</span></span>
             <span>Combustível: <span id="fuel">100</span></span>
@@ -130,30 +125,7 @@
             <button id="restartButton" style="display: none;">Reiniciar Jogo</button>
         </div>
     </div>
-
-    <script>
-        const riverRaidLink = document.getElementById('riverRaidLink');
-        const grandPrixLink = document.getElementById('grandPrixLink');
-        const menu = document.getElementById('mainMenu');
-        const gameContainer = document.getElementById('gameContainer');
-
-        riverRaidLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            menu.style.display = 'none';
-            gameContainer.style.display = 'block';
-            if (window.initRiverRaid) window.initRiverRaid();
-        });
-
-        grandPrixLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            menu.style.display = 'none';
-            gameContainer.style.display = 'block';
-            if (window.initGrandPrix) window.initGrandPrix();
-        });
-    </script>
-
-    <script src="core.js"></script>
     <script src="riverraid.js"></script>
-    <script src="grandprix.js"></script>
+    <script>if(window.initRiverRaid) window.initRiverRaid();</script>
 </body>
 </html>
