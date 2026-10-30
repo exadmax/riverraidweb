@@ -2,130 +2,174 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
     <title>River Raid Pixel</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
     <style>
+        :root { --reserve: 190px; }
+        * { box-sizing: border-box; }
         body {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            min-height: 100dvh;
             margin: 0;
-            background-color: #1a1a2e; /* Azul escuro espacial */
-            font-family: 'Courier New', Courier, monospace; /* Fonte pixelada */
-            color: #e0e0e0; /* Cinza claro */
-            overflow: hidden; /* Evitar barras de rolagem */
+            background-color: #1a1a2e;
+            font-family: 'Courier New', Courier, monospace;
+            color: #e0e0e0;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        #gameContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 8px;
+        }
+        .stage {
+            position: relative;
+            width: min(100%, 450px, calc((100vh - var(--reserve)) * 0.75));
+            width: min(100%, 450px, calc((100dvh - var(--reserve)) * 0.75));
         }
         #gameCanvas {
-            border: 2px solid #0f3460; /* Azul mais escuro para borda */
-            background-color: #16213e; /* Cor base do rio/céu */
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 3 / 4;
+            border: 2px solid #0f3460;
+            border-radius: 4px;
+            background-color: #16213e;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-            display: block; /* Para centralizar com margin auto se necessário */
-            max-width: 100%;
-            max-height: 80vh; /* Limitar altura para caber na tela */
-            aspect-ratio: 3 / 4; /* Proporção comum para jogos verticais */
-            image-rendering: pixelated; /* Mantém a estética pixel art */
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+            touch-action: none;
         }
         .game-info {
             display: flex;
             justify-content: space-between;
+            gap: 8px;
             width: 100%;
-            max-width: 600px; /* Mesma largura do canvas ou um pouco maior */
-            padding: 10px 20px;
-            font-size: 1.5em;
-            color: #00ffff; /* Ciano brilhante */
-            background-color: rgba(0,0,0,0.3);
+            max-width: 450px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #00ffff;
+            background-color: rgba(0, 0, 0, 0.3);
             border-radius: 8px;
-            margin-bottom: 15px;
         }
+        .game-info span { white-space: nowrap; }
+        @media (max-width: 440px) { .game-info { font-size: 0.72em; padding: 8px; } .fuel-bar { width: 36px; } }
+        .fuel-wrap { display: flex; align-items: center; gap: 6px; }
+        .fuel-bar {
+            width: 64px;
+            height: 10px;
+            background: #0b1226;
+            border: 1px solid #0f3460;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        #fuelFill { height: 100%; width: 100%; background: #00ffff; transition: width 0.15s linear; }
+        #fuelFill.low { background: #ff4d4d; }
         .controls-info {
-            margin-top: 15px;
-            font-size: 1em;
-            color: #a0a0a0; /* Cinza mais claro */
+            margin-top: 8px;
+            font-size: 0.8em;
+            color: #a0a0a0;
             text-align: center;
         }
         .touch-controls {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            max-width: 600px;
+            display: none;
+            width: 100%;
+            max-width: 450px;
             margin-top: 10px;
+            justify-content: space-between;
+            align-items: center;
         }
-        .touch-controls button {
-            width: 60px;
-            height: 60px;
-        }
+        .dpad { display: grid; grid-template-columns: repeat(3, 56px); grid-template-rows: repeat(3, 56px); gap: 4px; }
+        .dpad button:nth-child(1) { grid-area: 1 / 2; }
+        .dpad button:nth-child(2) { grid-area: 2 / 1; }
+        .dpad button:nth-child(3) { grid-area: 2 / 3; }
+        .dpad button:nth-child(4) { grid-area: 3 / 2; }
+        .touch-controls button { touch-action: none; margin: 0; }
+        #btnShoot { width: 96px; height: 96px; border-radius: 50%; font-weight: bold; }
+        .dpad button { width: 56px; height: 56px; padding: 0; }
         button {
             background-color: #00ffff;
             color: #1a1a2e;
             border: none;
             padding: 10px 20px;
-            border-radius: 5px;
+            border-radius: 6px;
+            font-family: inherit;
             font-size: 1em;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-            margin-top: 10px;
+            transition: background-color 0.2s, transform 0.1s;
         }
-        button:hover {
-            background-color: #00b8b8;
-            transform: scale(1.05);
-        }
-        button:active {
-            transform: scale(0.95);
-        }
+        button:hover { background-color: #00b8b8; }
+        button:active, button.pressed { background-color: #00b8b8; transform: scale(0.95); }
+        button:focus-visible { outline: 3px solid #ffff00; outline-offset: 2px; }
         #messageOverlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.72);
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 18px;
+            padding: 16px;
             color: white;
-            font-size: 2em;
+            font-size: 1.4em;
             text-align: center;
-            z-index: 100; /* Para ficar sobre o canvas */
+            z-index: 100;
+        }
+        #messageText { margin: 0; white-space: pre-line; }
+        /* Mostra os controles de toque apenas em dispositivos sem mouse */
+        @media (hover: none), (pointer: coarse) {
+            :root { --reserve: 330px; }
+            .touch-controls { display: flex; }
+            .controls-info { display: none; }
         }
     </style>
 </head>
 <body>
-
-    
-    <div id="gameContainer" style="width: 100%; height: 100%;">
-        <div class="game-info">
+    <div id="gameContainer">
+        <div class="game-info" aria-live="off">
             <span>Pontos: <span id="score">0</span></span>
-            <span>Combustível: <span id="fuel">100</span></span>
+            <span>Recorde: <span id="highScore">0</span></span>
+            <span class="fuel-wrap">
+                <span>Comb.: <span id="fuel">100</span></span>
+                <span class="fuel-bar"><span id="fuelFill" style="display:block"></span></span>
+            </span>
             <span>Vidas: <span id="lives">3</span></span>
         </div>
 
+        <div class="stage">
+            <canvas id="gameCanvas" width="450" height="600"></canvas>
+            <div id="messageOverlay" role="dialog" aria-live="polite">
+                <p id="messageText"></p>
+                <button id="actionButton" type="button">Iniciar</button>
+            </div>
+        </div>
+
         <div class="controls-info">
-            Use as setas (← → ↑ ↓) para mover e Espaço para atirar.
+            Setas ou WASD para mover · Espaço atira (segure para atirar sem parar) · P pausa
         </div>
 
         <div id="touchControls" class="touch-controls">
-            <button id="btnLeft">◀</button>
-            <button id="btnRight">▶</button>
-            <button id="btnUp">▲</button>
-            <button id="btnDown">▼</button>
-            <button id="btnShoot">Fire</button>
-        </div>
-
-        <div id="messageOverlay" style="display: none;">
-            <p id="messageText"></p>
-            <button id="restartButton" style="display: none;">Reiniciar Jogo</button>
+            <div class="dpad">
+                <button id="btnUp" type="button" aria-label="Subir">▲</button>
+                <button id="btnLeft" type="button" aria-label="Esquerda">◀</button>
+                <button id="btnRight" type="button" aria-label="Direita">▶</button>
+                <button id="btnDown" type="button" aria-label="Descer">▼</button>
+            </div>
+            <button id="btnShoot" type="button">FIRE</button>
         </div>
     </div>
+    <script src="logic.js"></script>
     <script src="riverraid.js"></script>
-    <script>if(window.initRiverRaid) window.initRiverRaid();</script>
 </body>
 </html>
