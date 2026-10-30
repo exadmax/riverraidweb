@@ -1,74 +1,48 @@
 # River Raid Pixel 🚀
 
-Um jogo de arcade estilo River Raid desenvolvido em HTML, CSS e JavaScript puro, com uma estética pixel art e efeitos sonoros básicos. Voe por um rio perigoso, destrua inimigos, desvie de obstáculos e gerencie seu combustível para alcançar a maior pontuação possível!
+Jogo de arcade estilo River Raid em HTML, CSS e JavaScript puro (sem frameworks), com estética pixel art e efeitos sonoros via Tone.js. Voe pelo rio, destrua inimigos e pontes, e gerencie o combustível para chegar ao maior recorde.
 
-## 🎮 Como Jogar
+## 🎮 Como jogar
 
-O objetivo do jogo é voar o mais longe possível ao longo do rio, destruindo inimigos e postos de combustível para reabastecer, enquanto desvia das margens do rio.
+| Ação | Teclado | Toque |
+|------|---------|-------|
+| Mover | Setas ou WASD | D-pad na tela |
+| Atirar | Espaço (segure para atirar sem parar) | Botão FIRE |
+| Iniciar / continuar | Enter ou Espaço | Botão na tela |
+| Pausar | P ou Esc (também pausa ao sair da aba) | — |
 
-### Controles:
-* **Setas Direcionais (← → ↑ ↓) ou botões de toque:** Mover a nave.
-* **Barra de Espaço ou botão "Fire":** Atirar.
-* **Enter / Espaço (na tela inicial):** Iniciar o jogo.
+Os controles de toque aparecem automaticamente em celulares e tablets.
 
-### Elementos do Jogo:
-* **Nave do Jogador:** Controlada por você.
-* **Inimigos:** Navios, helicópteros e jatos que aparecem no rio. Destrua-os para ganhar pontos.
-* **Postos de Combustível (F):** Sobrevoe para reabastecer. Seu combustível diminui com o tempo.
-* **Margens do Rio:** Evite colidir com as margens.
-* **Pontuação:** Aumenta ao destruir inimigos.
-* **Vidas:** Você começa com 3 vidas. Perde uma vida ao colidir ou ficar sem combustível.
-* **Game Over:** O jogo termina quando você perde todas as vidas ou fica sem combustível.
+### Regras
+* **As margens do rio são mortais**: encostar nelas custa uma vida.
+* **Inimigos:** navios (30 pts, patrulham o rio), helicópteros (60 pts) e jatos (100 pts, cruzam a tela).
+* **Pontes (500 pts):** bloqueiam o rio periodicamente — destrua-as com um tiro antes de passar.
+* **Postos de combustível (F):** sobrevoe para reabastecer aos poucos. Atirar neles dá 80 pts, mas você perde o abastecimento.
+* **Vidas:** começa com 3, ganha uma a cada 5000 pontos (máximo 5). Após perder uma vida, a nave renasce no meio do rio, com combustível cheio e alguns instantes de invencibilidade.
+* **Recorde:** salvo no navegador (`localStorage`).
+* A velocidade aumenta gradualmente.
 
-## ✨ Funcionalidades
+## 🚀 Executar
 
-* Movimentação da nave em 4 direções.
-* Mecânica de tiro com cooldown.
-* Geração procedural e rolagem do cenário do rio.
-* Diferentes tipos de inimigos com comportamentos básicos (navios, helicópteros, jatos).
-* Sistema de combustível com postos de reabastecimento.
-* Detecção de colisão (nave vs. margens, nave vs. inimigos, tiros vs. inimigos, nave vs. combustível).
-* Sistema de pontuação e vidas.
-* Efeitos sonoros básicos para ações no jogo (tiro, explosão, combustível, game over) usando Tone.js.
-* Interface de usuário para pontuação, combustível e vidas.
-* Tela de início e fim de jogo com opção de reiniciar.
-* Design responsivo básico para o canvas do jogo.
+Abra o `index.html` no navegador. Não há etapa de build. O som usa o Tone.js via CDN; sem internet o jogo funciona normalmente, só que mudo.
 
-## 🛠️ Tecnologias Utilizadas
+## 🧪 Desenvolvimento
 
-* **HTML5:** Estrutura do jogo (arquivo principal: `index.html`).
-* **CSS3:** Estilização da página e elementos do jogo (com Tailwind CSS para utilitários básicos de layout da página, embutido no `index.html`).
-* **JavaScript (ES6+):** Lógica principal do jogo, manipulação do DOM e renderização no Canvas.
-* **p5.js:** Biblioteca utilizada para gerenciamento do canvas e loop do jogo.
-* **HTML5 Canvas API:** Para desenhar e animar os elementos do jogo.
-* **Tone.js:** Para a geração de efeitos sonoros.
+```bash
+npm install
+npm test
+```
 
-## 🚀 Como Executar Localmente
+Estrutura:
+* `index.html` — página, HUD, overlay e controles de toque.
+* `riverraid.js` — loop do jogo (passo fixo de 60 Hz), entidades, desenho e entrada.
+* `logic.js` — funções puras (colisão, geração do rio, remoção segura de itens), com testes unitários.
+* `__tests__/` — testes Jest: lógica pura, estrutura do HTML e um smoke test que executa o jogo em jsdom.
 
-1.  **Salve o arquivo:**
-    * Certifique-se de que você tem o arquivo `index.html` contendo todo o código do jogo salvo em seu computador.
-2.  **Instale as dependências:**
-    * Execute `npm install` para preparar o ambiente de testes.
-3.  **Abra o arquivo no navegador:**
-    * Navegue até a pasta onde você salvou o arquivo `index.html`.
-    * Abra o arquivo `index.html` diretamente no seu navegador de preferência (Google Chrome, Firefox, Edge, etc.).
+## 🔮 Ideias futuras
 
-O jogo deverá carregar e você poderá começar a jogar!
-
-## 🧪 Testes
-
-Após instalar as dependências, rode `npm test` para executar testes básicos de estrutura.
-
-## 🔮 Melhorias Futuras (Sugestões)
-
-* Implementar sprites pixel art reais para o jogador, inimigos e cenário.
-* Adicionar mais tipos de inimigos com padrões de ataque e movimento mais complexos.
-* Incluir pontes destrutíveis.
-* Sistema de power-ups (tiro mais rápido, escudo, etc.).
-* Aumento progressivo da dificuldade com níveis ou fases.
-* Música de fundo e efeitos sonoros mais elaborados.
-* Tabela de recordes (High Scores) usando LocalStorage.
-
----
-
-Divirta-se jogando e modificando!
+* Sprites pixel art reais e animação de explosão.
+* Novos inimigos com padrões de ataque.
+* Power-ups (tiro mais rápido, escudo).
+* Música de fundo e fases com visuais diferentes.
+* Empacotar como PWA ou app Android.

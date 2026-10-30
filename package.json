@@ -10,6 +10,6 @@
     "jsdom": "^22.1.0"
   },
   "jest": {
-    "testEnvironment": "jsdom"
+    "testEnvironment": "node"
   }
 }
